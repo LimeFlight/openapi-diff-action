@@ -1,0 +1,25 @@
+name: "OpenAPI Diff Action"
+description: "Find breaking and non-breaking changes in OpenAPI specs"
+
+branding:
+  icon: copy
+  color: green
+
+inputs:
+  head-spec:
+    description: "The relative path or http url of the HEAD (new) spec"
+    required: true
+  base-spec:
+    description: "The relative path or http url of the BASE (old) spec"
+    required: true
+  github-token:
+    description: "A personal access token to use; this token is used to add comments and labels to pull requests"
+    required: true
+
+outputs:
+  classification:
+    description: "The type of change detected; possible values: 'major', 'minor', 'patch'"
+
+runs:
+  using: docker
+  image: Dockerfile
