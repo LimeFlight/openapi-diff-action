@@ -13,7 +13,7 @@ namespace yaos.OpenAPI.Diff.Action
     {
         static async Task Main(string[] args)
         {
-            if (args.Length != 5 || args.Length != 6)
+            if (args.Length < 5 || args.Length > 6)
                 throw new ArgumentException("Number of arguments does not match expected amount.");
 
             var token = args[0];
@@ -21,12 +21,12 @@ namespace yaos.OpenAPI.Diff.Action
                 throw new ArgumentException("Error casting type");
             if (!int.TryParse(args[2], out var prNumber))
                 throw new ArgumentException("Error casting type");
-            if (!Uri.TryCreate(args[3], UriKind.RelativeOrAbsolute, out var oldFile) && !oldFile.IsFile)
+            if (!PathUtil.TryGetAbsoluteUri(args[3], out var oldFile) || !oldFile.IsFile)
                 throw new ArgumentException("Error casting type");
-            if (!Uri.TryCreate(args[4], UriKind.RelativeOrAbsolute, out var newFile) && !newFile.IsFile)
+            if (!PathUtil.TryGetAbsoluteUri(args[4], out var newFile) || !oldFile.IsFile)
                 throw new ArgumentException("Error casting type");
             var addComment = false;
-            if (args[5] != null && !bool.TryParse(args[5], out addComment))
+            if (args.Length == 6 && args.GetValue(5) != null && !bool.TryParse(args[5], out addComment))
                 throw new ArgumentException("Error casting type");
 
             var serviceProvider = Startup.Build();
@@ -44,7 +44,7 @@ namespace yaos.OpenAPI.Diff.Action
                 Console.WriteLine(e);
                 throw;
             }
-            
+
             var identifier = $"<!-- [openapi-diff-action-{Path.GetFileNameWithoutExtension(oldFile.LocalPath)}] -->";
             var credentials = new InMemoryCredentialStore(new Credentials(token));
             var github = new GitHubClient(new ProductHeaderValue("openapi-diff-action"), credentials);
@@ -58,10 +58,12 @@ namespace yaos.OpenAPI.Diff.Action
                     var comments = await github.Issue.Comment.GetAllForIssue(repositoryId, prNumber);
                     var existingComment = comments.FirstOrDefault(x => x.Body.Contains(identifier));
                     if (existingComment != null)
+                    {
                         await github.Issue.Comment.Update(repositoryId, existingComment.Id, commentText);
+                        return;
+                    }
                 }
-                else
-                    await github.Issue.Comment.Create(repositoryId, prNumber, commentText);
+                await github.Issue.Comment.Create(repositoryId, prNumber, commentText);
             }
             catch (Exception e)
             {
