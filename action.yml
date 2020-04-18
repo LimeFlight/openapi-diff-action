@@ -6,15 +6,18 @@ branding:
   color: green
 
 inputs:
-  head-spec:
-    description: "The relative path or http url of the HEAD (new) spec"
+  github-token:
+    description: "A personal access token to use; this token is used to add comments and labels to pull requests"
     required: true
   base-spec:
     description: "The relative path or http url of the BASE (old) spec"
     required: true
-  github-token:
-    description: "A personal access token to use; this token is used to add comments and labels to pull requests"
+  head-spec:
+    description: "The relative path or http url of the HEAD (new) spec"
     required: true
+  add-comment:
+    description: "Set to true if comment should be added, not overwritten"
+    required: false
 
 outputs:
   classification:
@@ -23,3 +26,5 @@ outputs:
 runs:
   using: docker
   image: Dockerfile
+  args:
+    - ${{ inputs.github-token, github.event.pull_request.number, inputs.base-spec, inputs.head-spec, inputs.add-comment}}

@@ -17,13 +17,14 @@ namespace yaos.OpenAPI.Diff.Action
                 throw new ArgumentException("Number of arguments does not match expected amount.");
 
             var token = args[0];
-            if (!long.TryParse(args[1], out var repositoryId))
-                throw new ArgumentException("Error casting type");
+            var repository = args[1];
+            var owner = repository.Split('/')[0];
+            var repositoryName = repository.Split('/')[0];
             if (!int.TryParse(args[2], out var prNumber))
                 throw new ArgumentException("Error casting type");
             if (!PathUtil.TryGetAbsoluteUri(args[3], out var oldFile) || !oldFile.IsFile)
                 throw new ArgumentException("Error casting type");
-            if (!PathUtil.TryGetAbsoluteUri(args[4], out var newFile) || !oldFile.IsFile)
+            if (!PathUtil.TryGetAbsoluteUri(args[4], out var newFile) || !newFile.IsFile)
                 throw new ArgumentException("Error casting type");
             var addComment = false;
             if (args.Length == 6 && args.GetValue(5) != null && !bool.TryParse(args[5], out addComment))
@@ -48,22 +49,22 @@ namespace yaos.OpenAPI.Diff.Action
             var identifier = $"<!-- [openapi-diff-action-{Path.GetFileNameWithoutExtension(oldFile.LocalPath)}] -->";
             var credentials = new InMemoryCredentialStore(new Credentials(token));
             var github = new GitHubClient(new ProductHeaderValue("openapi-diff-action"), credentials);
-
+            
             var commentText = $"{identifier}\n{markdown}";
 
             try
             {
                 if (!addComment)
                 {
-                    var comments = await github.Issue.Comment.GetAllForIssue(repositoryId, prNumber);
+                    var comments = await github.Issue.Comment.GetAllForIssue(owner, repositoryName, prNumber);
                     var existingComment = comments.FirstOrDefault(x => x.Body.Contains(identifier));
                     if (existingComment != null)
                     {
-                        await github.Issue.Comment.Update(repositoryId, existingComment.Id, commentText);
+                        await github.Issue.Comment.Update(owner, repositoryName, existingComment.Id, commentText);
                         return;
                     }
                 }
-                await github.Issue.Comment.Create(repositoryId, prNumber, commentText);
+                await github.Issue.Comment.Create(owner, repositoryName, prNumber, commentText);
             }
             catch (Exception e)
             {
