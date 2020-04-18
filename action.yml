@@ -27,4 +27,8 @@ runs:
   using: docker
   image: Dockerfile
   args:
-    - ${{ inputs.github-token, github.event.pull_request.number, inputs.base-spec, inputs.head-spec, inputs.add-comment}}
+    - ${{ inputs.github-token}}
+    - ${{ github.event.pull_request.number }}
+    - ${{ inputs.base-spec }}
+    - ${{ inputs.head-spec }}
+    - ${{ inputs.add-comment }}
