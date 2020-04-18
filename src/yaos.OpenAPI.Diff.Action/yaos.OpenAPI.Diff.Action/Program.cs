@@ -1,9 +1,11 @@
-﻿using Octokit;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Octokit;
 using Octokit.Internal;
 using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using yaos.OpenAPI.Diff.Output;
 
 namespace yaos.OpenAPI.Diff.Action
 {
@@ -27,11 +29,27 @@ namespace yaos.OpenAPI.Diff.Action
             if (args[5] != null && !bool.TryParse(args[5], out addComment))
                 throw new ArgumentException("Error casting type");
 
+            var serviceProvider = Startup.Build();
+            var openAPICompare = serviceProvider.GetService<IOpenAPICompare>();
+            var renderer = serviceProvider.GetService<IMarkdownRender>();
+
+            string markdown;
+            try
+            {
+                var openAPIDiff = openAPICompare.FromLocations(oldFile.LocalPath, newFile.LocalPath);
+                markdown = renderer.Render(openAPIDiff);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            
             var identifier = $"<!-- [openapi-diff-action-{Path.GetFileNameWithoutExtension(oldFile.LocalPath)}] -->";
             var credentials = new InMemoryCredentialStore(new Credentials(token));
             var github = new GitHubClient(new ProductHeaderValue("openapi-diff-action"), credentials);
 
-            var markdown = identifier + "test";
+            var commentText = $"{identifier}\n{markdown}";
 
             try
             {
@@ -40,10 +58,10 @@ namespace yaos.OpenAPI.Diff.Action
                     var comments = await github.Issue.Comment.GetAllForIssue(repositoryId, prNumber);
                     var existingComment = comments.FirstOrDefault(x => x.Body.Contains(identifier));
                     if (existingComment != null)
-                        await github.Issue.Comment.Update(repositoryId, existingComment.Id, markdown);
+                        await github.Issue.Comment.Update(repositoryId, existingComment.Id, commentText);
                 }
                 else
-                    await github.Issue.Comment.Create(repositoryId, prNumber, markdown);
+                    await github.Issue.Comment.Create(repositoryId, prNumber, commentText);
             }
             catch (Exception e)
             {
