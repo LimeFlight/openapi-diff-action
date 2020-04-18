@@ -20,7 +20,7 @@ param (
 )
 
 # Install openapi-diff-action from nuget
-dotnet tools install openapi-diff-action
+dotnet tool install --global yaos.OpenAPI.Diff.Action --version 1.0.0-alpha2
 
 # Run openapi-diff-action with args from github action
 openapi-diff-action $GitHubToken $GITHUB_REPOSITORY $PrNumber $OldFile $NewFile $AddComment
