@@ -382,19 +382,20 @@ try {
   $AddComment = $false
 }
 
-Write-Host "Starting"
+Write-Output "Starting"
 
-Write-Host $NewFile
-Write-Host $OldFile
-Write-Host $GitHubToken
-Write-Host $AddComment
-Write-Host $GitHubEventPath
+Write-Output "HEAD-SPEC = $($NewFile)"
+Write-Output "BASE-SPEC = $($OldFile)"
+Write-Output "GITHUB_TOKEN = $($GitHubToken)" 
+Write-Output "ADD_COMMENT = $($AddComment)"
+Write-Output "GITHUB_REPOSITORY = $($GitHubRepository)"
+Write-Output "GITHUB_EVENT_PATH = $($GitHubEventPath)"
 
 $ActionEvent = ConvertFrom-Json $GitHubEventPath
-Write-Host $ActionEvent 
+Write-Output $ActionEvent 
 
 $PullRequest = $ActionEvent.pull_request.number
-Write-Host $PullRequest 
+Write-Output $PullRequest 
 
 # Install openapi-diff-action from nuget
 dotnet tool install --global yaos.OpenAPI.Diff.Action --version 1.0.0-alpha
