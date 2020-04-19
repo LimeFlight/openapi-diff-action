@@ -28,7 +28,6 @@ runs:
   image: Dockerfile
   args:
     - ${{ inputs.github-token}}
-    - ${{ github.event.pull_request.number }}
     - ${{ inputs.base-spec }}
     - ${{ inputs.head-spec }}
     - ${{ inputs.add-comment }}
