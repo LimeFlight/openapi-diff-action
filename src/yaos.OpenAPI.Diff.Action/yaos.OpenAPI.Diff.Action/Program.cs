@@ -19,7 +19,7 @@ namespace yaos.OpenAPI.Diff.Action
             var token = args[0];
             var repository = args[1];
             var owner = repository.Split('/')[0];
-            var repositoryName = repository.Split('/')[0];
+            var repositoryName = repository.Split('/')[1];
             if (!int.TryParse(args[2], out var prNumber))
                 throw new ArgumentException("Error casting type");
             if (!PathUtil.TryGetAbsoluteUri(args[3], out var oldFile) || !oldFile.IsFile)
