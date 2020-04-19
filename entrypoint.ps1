@@ -86,13 +86,9 @@ Write-Output "EVENT JSON = $($ActionEvent)"
 $PullRequest = $ActionEvent.pull_request.number
 Write-Output "PULL REQUEST ID = $($PullRequest)"
 
-# Add dotnet to PATH
-$env:Path += ";/github/home/.dotnet/tools"
-Write-Output "PATH = $($env:Path)"
-
 # Install openapi-diff-action from nuget
 dotnet new tool-manifest
-dotnet tool install yaos.OpenAPI.Diff.Action --version 1.0.0-alpha
+dotnet tool install yaos.OpenAPI.Diff.Action --version 1.0.0-alpha3
 
 # Run openapi-diff-action with args from github action
 dotnet tool run openapi-diff-action $GitHubToken $GitHubRepository $PullRequest $OldFile $NewFile $AddComment
