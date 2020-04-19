@@ -2,7 +2,60 @@
 
 ## Load up some common functionality for interacting
 ## with the GitHub Actions/Workflow environment
-. lib/ActionsCore.ps1
+# . lib/ActionsCore.ps1 or ./lib/ActionsCore.ps1 -- not working for some reason
+
+## Used to identify inputs from env vars in Action/Workflow context
+if (-not (Get-Variable -Scope Script -Name INPUT_PREFIX -ErrorAction SilentlyContinue)) {
+    Set-Variable -Scope Script -Option Constant -Name INPUT_PREFIX -Value 'INPUT_'
+}
+
+<#
+.SYNOPSIS
+Gets the value of an input.  The value is also trimmed.
+.PARAMETER Name
+Name of the input to get
+.PARAMETER Required
+Whether the input is required. If required and not present, will throw.
+#>
+function Get-ActionInput {
+    param(
+        [Parameter(Position=0, Mandatory)]
+        [string]$Name,
+        [switch]$Required
+    )
+    
+    $cleanName = ($Name -replace ' ','_').ToUpper()
+    $inputValue = Get-ChildItem "Env:$($INPUT_PREFIX)$($cleanName)" -ErrorAction SilentlyContinue
+    if ($Required -and (-not $inputValue)) {
+        throw "Input required and not supplied: $($Name)"
+    }
+
+    return "$($inputValue.Value)".Trim()
+}
+
+<#
+.SYNOPSIS
+Gets the value of an input.  The value is also trimmed.
+.PARAMETER Name
+Name of the input to get
+.PARAMETER Required
+Whether the input is required. If required and not present, will throw.
+#>
+function Get-EnvironmentInput {
+    param(
+        [Parameter(Position=0, Mandatory)]
+        [string]$Name,
+        [switch]$Required
+    )
+    
+    $cleanName = ($Name -replace ' ','_').ToUpper()
+    $inputValue = Get-ChildItem "Env:$($cleanName)" -ErrorAction SilentlyContinue
+    if ($Required -and (-not $inputValue)) {
+        throw "Env Input required and not supplied: $($Name)"
+    }
+
+    return "$($inputValue.Value)".Trim()
+}
 
 ## Pull in some inputs
 $NewFile = Get-ActionInput head_spec -Required
