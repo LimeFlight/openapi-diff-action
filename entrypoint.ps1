@@ -108,6 +108,30 @@ function Get-ActionInput {
 
 <#
 .SYNOPSIS
+Gets the value of an input.  The value is also trimmed.
+.PARAMETER Name
+Name of the input to get
+.PARAMETER Required
+Whether the input is required. If required and not present, will throw.
+#>
+function Get-EnvironmentInput {
+    param(
+        [Parameter(Position=0, Mandatory)]
+        [string]$Name,
+        [switch]$Required
+    )
+    
+    $cleanName = ($Name -replace ' ','_').ToUpper()
+    $inputValue = Get-ChildItem "Env:$($cleanName)" -ErrorAction SilentlyContinue
+    if ($Required -and (-not $inputValue)) {
+        throw "Env Input required and not supplied: $($Name)"
+    }
+
+    return "$($inputValue.Value)".Trim()
+}
+
+<#
+.SYNOPSIS
 Returns a map of all the available inputs and their values.
 .DESCRIPTION
 Lookups in the returned map are case-insensitive, as per the
@@ -348,8 +372,8 @@ function ConvertTo-EscapedValue {
 $NewFile = Get-ActionInput head_spec -Required
 $OldFile   = Get-ActionInput base_spec -Required
 $GitHubToken =  Get-ActionInput github_token -Required
-$GitHubEventPath = Get-ActionInput github_event_path -Required
-$GitHubRepository = Get-ActionInput github_repository -Required
+$GitHubEventPath = Get-EnvironmentInput github_event_path -Required
+$GitHubRepository = Get-EnvironmentInput github_repository -Required
 $AddCommentStr = Get-ActionInput add_comment
 
 try {
