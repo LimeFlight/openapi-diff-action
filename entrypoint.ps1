@@ -2,7 +2,6 @@
 
 ## Load up some common functionality for interacting
 ## with the GitHub Actions/Workflow environment
-# with the GitHub Actions/Workflow environment
 . lib/ActionsCore.ps1
 
 ## Pull in some inputs
