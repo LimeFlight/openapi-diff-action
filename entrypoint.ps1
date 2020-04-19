@@ -1,30 +1,22 @@
 #!/usr/bin/pwsh
 
-[CmdletBinding()]
-param (
-    [Parameter(Mandatory = $true, Position = 0)]
-    [string]
-    $GitHubToken,
-    [Parameter(Mandatory = $true, Position = 1)]
-    [string]
-    $OldFile,
-    [Parameter(Mandatory = $true, Position = 2)]
-    [string]
-    $NewFile,
-    [Parameter(Mandatory = $false, Position = 3)]
-    [bool]
-    $AddComment    
-)
+$NewFile = $INPUT_HEAD-SPEC 
+$OldFile =$INPUT_BASE-SPEC 
+$GitHubToken = $INPUT_GITHUB-TOKEN 
+$AddComment = [boolean]$INPUT_ADD-COMMENT
 
 Write-Host "Starting"
+
+Write-Host $NewFile
+Write-Host $OldFile
+Write-Host $GitHubToken
+Write-Host $AddComment
 Write-Host $GITHUB_EVENT_PATH
 
 $ActionEvent = ConvertFrom-Json $GITHUB_EVENT_PATH
-
 Write-Host $ActionEvent 
 
 $PullRequest = $ActionEvent.pull_request.number
-
 Write-Host $PullRequest 
 
 # Install openapi-diff-action from nuget

@@ -18,8 +18,8 @@ inputs:
   add-comment:
     description: "Set to true if comment should be added, not overwritten"
     required: false
-    default: false
-    
+    default: True
+
 outputs:
   classification:
     description: "The type of change detected; possible values: 'major', 'minor', 'patch'"
@@ -27,8 +27,3 @@ outputs:
 runs:
   using: docker
   image: Dockerfile
-  args:
-    - ${{ inputs.github-token}}
-    - ${{ inputs.base-spec }}
-    - ${{ inputs.head-spec }}
-    - ${{ inputs.add-comment }}
