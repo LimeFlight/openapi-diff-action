@@ -6,11 +6,17 @@
 
 ## Pull in some inputs
 $NewFile = Get-ActionInput head_spec -Required
-$OldFile   = Get-ActionInput base_spec
-$GitHubToken =  Get-ActionInput $github_token
-$AddComment = [boolean] Get-ActionInput $add_comment
-$GitHubEventPath = Get-ActionInput $github_event_path
-$GitHubRepository = Get-ActionInput $github_repository
+$OldFile   = Get-ActionInput base_spec -Required
+$GitHubToken =  Get-ActionInput github_token -Required
+$GitHubEventPath = Get-ActionInput github_event_path -Required
+$GitHubRepository = Get-ActionInput github_repository -Required
+$AddCommentStr = Get-ActionInput add_comment
+
+try {
+  $AddComment = [System.Convert]::ToBoolean($AddCommentStr) 
+} catch [FormatException] {
+  $AddComment = $false
+}
 
 Write-Host "Starting"
 
