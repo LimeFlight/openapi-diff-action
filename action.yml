@@ -6,16 +6,16 @@ branding:
   color: green
 
 inputs:
-  github-token:
+  github_token:
     description: "A personal access token to use; this token is used to add comments and labels to pull requests"
     required: true
-  base-spec:
+  base_spec:
     description: "The relative path or http url of the BASE (old) spec"
     required: true
-  head-spec:
+  head_spec:
     description: "The relative path or http url of the HEAD (new) spec"
     required: true
-  add-comment:
+  add_comment:
     description: "Set to true if comment should be added, not overwritten"
     required: false
     default: True
