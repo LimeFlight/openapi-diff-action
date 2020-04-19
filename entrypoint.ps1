@@ -2,7 +2,7 @@
 
 ## Load up some common functionality for interacting
 ## with the GitHub Actions/Workflow environment
-. lib/ActionsCore.ps1
+. ./lib/ActionsCore.ps1
 
 ## Pull in some inputs
 $NewFile = Get-ActionInput head_spec -Required
