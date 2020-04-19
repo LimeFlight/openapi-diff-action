@@ -392,12 +392,13 @@ Write-Output "GITHUB_REPOSITORY = $($GitHubRepository)"
 Write-Output "GITHUB_EVENT_PATH = $($GitHubEventPath)"
 
 $ActionEvent = Get-Content -Raw -Path $GitHubEventPath | ConvertFrom-Json
-Write-Output $ActionEvent 
+Write-Output "EVENT JSON = $($ActionEvent)"
 
 $PullRequest = $ActionEvent.pull_request.number
-Write-Output $PullRequest 
+Write-Output "PULL REQUEST ID = $($PullRequest)"
 
 # Install openapi-diff-action from nuget
+## TODO: INSTALL dotnet
 dotnet tool install --global yaos.OpenAPI.Diff.Action --version 1.0.0-alpha
 
 # Run openapi-diff-action with args from github action
