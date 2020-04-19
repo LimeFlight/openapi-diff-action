@@ -391,7 +391,7 @@ Write-Output "ADD_COMMENT = $($AddComment)"
 Write-Output "GITHUB_REPOSITORY = $($GitHubRepository)"
 Write-Output "GITHUB_EVENT_PATH = $($GitHubEventPath)"
 
-$ActionEvent = ConvertFrom-Json $GitHubEventPath
+$ActionEvent = Get-Content -Raw -Path $GitHubEventPath | ConvertFrom-Json
 Write-Output $ActionEvent 
 
 $PullRequest = $ActionEvent.pull_request.number
