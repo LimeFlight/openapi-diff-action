@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "yaos.OpenAPI.Diff.Action": {
+      "commandName": "Project",
+      "commandLineArgs": "2400da39032ad8e7201f10ed4c695672cc83fd3c yaos/OpenAPI-Specifications 25 current/inventorymanagement.json new/inventorymanagement.json false false",
+      "workingDirectory": "C:\\Users\\FabianNiederer\\Downloads\\nswag\\diff"
+    }
+  }
+}
