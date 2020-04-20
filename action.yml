@@ -1,9 +1,9 @@
-name: "OpenAPI Diff Action"
-description: "Find breaking and non-breaking changes in OpenAPI specs"
+name: "OpenAPI Diff in PR"
+description: "Automatically compare OpenAPI v3 specification files and post result in PR"
 
 branding:
-  icon: copy
-  color: green
+  icon: file-text
+  color: blue
 
 inputs:
   github_token:
@@ -18,7 +18,11 @@ inputs:
   add_comment:
     description: "Set to true if comment should be added, not overwritten"
     required: false
-    default: True
+    default: "false"
+  exclude_labels:
+    description: "Set to true if no labels should be added"
+    required: false
+    default: "false"
 
 outputs:
   classification:
