@@ -1,11 +1,12 @@
 name: Publish
 
 on:
-  release: created
+  release:
+    types: [created]
 
-runs-on: ubuntu-latest
 jobs:
   publish-nuget:
+    runs-on: ubuntu-latest
     name: Publish OpenAPI Diff Action tool to nuget
     steps:
       - name: Checkout code
