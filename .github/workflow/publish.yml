@@ -1,0 +1,24 @@
+name: Publish
+
+on:
+  release: created
+
+runs-on: ubuntu-latest
+jobs:
+  publish-nuget:
+    name: Publish OpenAPI Diff Action tool to nuget
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup .net
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "3.1.201" # SDK Version to use.
+        env:
+          NUGET_AUTH_TOKEN: ${{secrets.NUGET_AUTH_TOKEN}}
+      - name: Create the package
+        run: dotnet pack --configuration Release
+        working-directory: ./src/yaos.OpenAPI.Diff.Action
+      - name: Publish the package
+        run: dotnet nuget push *.nupkg --skip-duplicate
+        working-directory: ./src/yaos.OpenAPI.Diff.Action/yaos.OpenAPI.Diff.Action/nupkg -s https://api.nuget.org/v3/index.json
