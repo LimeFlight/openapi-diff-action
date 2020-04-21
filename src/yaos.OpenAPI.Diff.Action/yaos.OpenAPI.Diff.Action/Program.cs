@@ -5,7 +5,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using yaos.OpenAPI.Diff.BusinessObjects;
+using yaos.OpenAPI.Diff.Action.Utils;
 using yaos.OpenAPI.Diff.Enums;
 using yaos.OpenAPI.Diff.Extensions;
 using yaos.OpenAPI.Diff.Output;
@@ -14,7 +14,7 @@ namespace yaos.OpenAPI.Diff.Action
 {
     class Program
     {
-        static async Task Main(string[] args)
+        static async Task<int> Main(string[] args)
         {
             if (args.Length != 7)
                 throw new ArgumentException("Number of arguments does not match expected amount.");
@@ -41,27 +41,25 @@ namespace yaos.OpenAPI.Diff.Action
             var renderer = serviceProvider.GetService<IMarkdownRender>();
 
             string markdown;
-            ChangedOpenApiBO openAPIDiff;
             DiffResultEnum diffResult;
             try
             {
-                openAPIDiff = openAPICompare.FromLocations(oldFile.LocalPath, newFile.LocalPath);
+                var openAPIDiff = openAPICompare.FromLocations(oldFile.LocalPath, newFile.LocalPath);
                 diffResult = openAPIDiff.IsChanged().DiffResult;
                 markdown = renderer.Render(openAPIDiff);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                Environment.ExitCode = 1;
                 throw;
             }
 
-            var identifier = $"<!-- [openapi-diff-action-identifier-{Path.GetFileNameWithoutExtension(oldFile.LocalPath)}] -->";
-            var changeLevel = $"<!-- [openapi-diff-action-changelevel-{diffResult}] -->";
+            var fileName = Path.GetFileNameWithoutExtension(oldFile.LocalPath);
+            var commentMarkdown = CommentUtil.GetCommentMarkdown(fileName, diffResult, markdown);
+
             var credentials = new InMemoryCredentialStore(new Credentials(token));
             var github = new GitHubClient(new ProductHeaderValue("openapi-diff-action"), credentials);
-
-
-            var commentText = $"{identifier}\n{changeLevel}\n{markdown}";
 
             try
             {
@@ -69,19 +67,19 @@ namespace yaos.OpenAPI.Diff.Action
 
                 if (!addComment)
                 {
-                    var existingComment = comments.FirstOrDefault(x => x.Body.Contains(identifier));
+                    var existingComment = comments.FirstOrDefault(x => x.Body.Contains(CommentUtil.GetIdentifierString(fileName)));
                     if (existingComment != null)
                     {
-                        await github.Issue.Comment.Update(owner, repositoryName, existingComment.Id, commentText);
+                        await github.Issue.Comment.Update(owner, repositoryName, existingComment.Id, commentMarkdown);
                     }
                     else
                     {
-                        await github.Issue.Comment.Create(owner, repositoryName, prNumber, commentText);
+                        await github.Issue.Comment.Create(owner, repositoryName, prNumber, commentMarkdown);
                     }
                 }
                 else
                 {
-                    await github.Issue.Comment.Create(owner, repositoryName, prNumber, commentText);
+                    await github.Issue.Comment.Create(owner, repositoryName, prNumber, commentMarkdown);
                 }
 
                 if (!excludeLabels)
@@ -129,8 +127,11 @@ namespace yaos.OpenAPI.Diff.Action
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                Environment.ExitCode = 1;
                 throw;
             }
+
+            return Environment.ExitCode;
         }
     }
 }

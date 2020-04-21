@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace yaos.OpenAPI.Diff.Action
+namespace yaos.OpenAPI.Diff.Action.Utils
 {
     public static class PathUtil
     {
