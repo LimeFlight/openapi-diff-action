@@ -102,3 +102,10 @@ dotnet tool install yaos.OpenAPI.Diff.Action --version 1.1.0-alpha2
 
 # Run openapi-diff-action with args from github action
 dotnet tool run openapi-diff-action $GitHubToken $GitHubRepository $PullRequest $OldFile $NewFile $AddComment $exludeLabels
+if ($LastExitCode -eq 0) {
+    Write-Host "Execution succeeded"
+}
+else {
+    Write-Host "Execution Failed"
+    exit $LastExitCode
+}
