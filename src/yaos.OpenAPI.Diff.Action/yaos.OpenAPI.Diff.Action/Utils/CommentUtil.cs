@@ -67,7 +67,7 @@ namespace yaos.OpenAPI.Diff.Action.Utils
 
             return diffResult switch
             {
-                DiffResultEnum.NoChanges => string.Format(badge, "No Changes", diffResult.GetColorCodeForDiffResult()),
+                DiffResultEnum.NoChanges => string.Format(badge, "No%20Changes", diffResult.GetColorCodeForDiffResult()),
                 DiffResultEnum.Metadata => string.Format(badge, "Metadata", diffResult.GetColorCodeForDiffResult()),
                 DiffResultEnum.Compatible => string.Format(badge, "Compatible", diffResult.GetColorCodeForDiffResult()),
                 DiffResultEnum.Unknown => string.Format(badge, "Unknown", diffResult.GetColorCodeForDiffResult()),

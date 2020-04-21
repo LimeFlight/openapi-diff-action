@@ -40,6 +40,9 @@ namespace yaos.OpenAPI.Diff.Action
             var openAPICompare = serviceProvider.GetService<IOpenAPICompare>();
             var renderer = serviceProvider.GetService<IMarkdownRender>();
 
+            var fileName = Path.GetFileNameWithoutExtension(oldFile.LocalPath);
+            Console.WriteLine($"Running OpenAPI Diff for {fileName}");
+
             string markdown;
             DiffResultEnum diffResult;
             try
@@ -55,7 +58,8 @@ namespace yaos.OpenAPI.Diff.Action
                 throw;
             }
 
-            var fileName = Path.GetFileNameWithoutExtension(oldFile.LocalPath);
+            Console.WriteLine($"Completed OpenAPI DIff with Result {diffResult}");
+
             var commentMarkdown = CommentUtil.GetCommentMarkdown(fileName, diffResult, markdown);
 
             var credentials = new InMemoryCredentialStore(new Credentials(token));
@@ -71,15 +75,18 @@ namespace yaos.OpenAPI.Diff.Action
                     if (existingComment != null)
                     {
                         await github.Issue.Comment.Update(owner, repositoryName, existingComment.Id, commentMarkdown);
+                        Console.WriteLine($"Updated existing comment with id {existingComment}");
                     }
                     else
                     {
                         await github.Issue.Comment.Create(owner, repositoryName, prNumber, commentMarkdown);
+                        Console.WriteLine("Added new comment because no existing comment found");
                     }
                 }
                 else
                 {
                     await github.Issue.Comment.Create(owner, repositoryName, prNumber, commentMarkdown);
+                    Console.WriteLine($"Added new comment because addComment is true");
                 }
 
                 if (!excludeLabels)
@@ -115,13 +122,10 @@ namespace yaos.OpenAPI.Diff.Action
                         await github.Issue.Labels.RemoveFromIssue(owner, repositoryName, prNumber, label.Name);
                     }
 
-                    if (diffResult > highestChangeLevel)
-                        await github.Issue.Labels.AddToIssue(owner, repositoryName, prNumber,
-                                new[] { LabelUtil.GetLabelForDiffResult(diffResult) });
-                    else
-                        await github.Issue.Labels.AddToIssue(owner, repositoryName, prNumber,
-                            new[] { LabelUtil.GetLabelForDiffResult(highestChangeLevel) });
 
+                    var labelName = LabelUtil.GetLabelForDiffResult(diffResult > highestChangeLevel ? diffResult : highestChangeLevel);
+                    await github.Issue.Labels.AddToIssue(owner, repositoryName, prNumber, new[] { labelName });
+                    Console.WriteLine($"Added label {labelName}");
                 }
             }
             catch (Exception e)

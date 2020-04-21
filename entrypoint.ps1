@@ -96,8 +96,9 @@ $PullRequest = $ActionEvent.pull_request.number
 Write-Output "PULL REQUEST ID = $($PullRequest)"
 
 # Install openapi-diff-action from nuget
+$env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE = 1
 dotnet new tool-manifest
-dotnet tool install yaos.OpenAPI.Diff.Action --version 1.1.0-alpha1
+dotnet tool install yaos.OpenAPI.Diff.Action --version 1.1.0-alpha2
 
 # Run openapi-diff-action with args from github action
 dotnet tool run openapi-diff-action $GitHubToken $GitHubRepository $PullRequest $OldFile $NewFile $AddComment $exludeLabels
