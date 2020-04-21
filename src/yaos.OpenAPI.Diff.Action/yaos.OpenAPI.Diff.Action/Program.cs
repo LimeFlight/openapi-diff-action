@@ -122,7 +122,6 @@ namespace yaos.OpenAPI.Diff.Action
                         await github.Issue.Labels.RemoveFromIssue(owner, repositoryName, prNumber, label.Name);
                     }
 
-
                     var labelName = LabelUtil.GetLabelForDiffResult(diffResult > highestChangeLevel ? diffResult : highestChangeLevel);
                     await github.Issue.Labels.AddToIssue(owner, repositoryName, prNumber, new[] { labelName });
                     Console.WriteLine($"Added label {labelName}");

@@ -8,7 +8,7 @@ namespace yaos.OpenAPI.Diff.Action.Utils
     public static class CommentUtil
     {
         private const string IdentifierKey = "openapi-diff-action-identifier-";
-        private const string ChangeLevelKey = "openapi-diff-action-identifier-";
+        private const string ChangeLevelKey = "openapi-diff-action-changelevel-";
 
         public static string GetIdentifier(string commentBody)
         {
