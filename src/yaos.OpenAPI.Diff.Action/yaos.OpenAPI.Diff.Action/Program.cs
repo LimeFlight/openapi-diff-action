@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using yaos.OpenAPI.Diff.Action.Utils;
 using yaos.OpenAPI.Diff.Enums;
 using yaos.OpenAPI.Diff.Extensions;
-using yaos.OpenAPI.Diff.Output;
+using yaos.OpenAPI.Diff.Output.Markdown;
 
 namespace yaos.OpenAPI.Diff.Action
 {
@@ -49,7 +49,7 @@ namespace yaos.OpenAPI.Diff.Action
             {
                 var openAPIDiff = openAPICompare.FromLocations(oldFile.LocalPath, newFile.LocalPath);
                 diffResult = openAPIDiff.IsChanged().DiffResult;
-                markdown = renderer.Render(openAPIDiff);
+                markdown = await renderer.Render(openAPIDiff);
             }
             catch (Exception e)
             {

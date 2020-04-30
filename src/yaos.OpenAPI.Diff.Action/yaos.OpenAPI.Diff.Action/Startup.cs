@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
 using Microsoft.Extensions.Logging;
-using yaos.OpenAPI.Diff.Output;
+using System;
+using yaos.OpenAPI.Diff.Output.Markdown;
 
 namespace yaos.OpenAPI.Diff.Action
 {
@@ -17,7 +17,6 @@ namespace yaos.OpenAPI.Diff.Action
                 })
                 .AddSingleton<IOpenAPICompare, OpenAPICompare>()
                 .AddSingleton<IMarkdownRender, MarkdownRender>()
-                //.AddTransient(x => (IExtensionDiff)x.GetService(typeof(ExtensionDiff)))
                 .BuildServiceProvider();
         }
     }
