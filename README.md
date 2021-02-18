@@ -12,20 +12,13 @@ This action needs two OpenAPI spec files to compare in order to run. Your workfl
 
 ### Inputs:
 
-- `head-spec` _(required)_: Local path or http URL to the new (HEAD) OpenAPI spec file. An error will be thrown if the file can't be found.
-- `base-spec` _(required)_: Local path or http URL to the old (BASE) OpenAPI spec file. An error will be thrown if the file can't be found.
+- `head-spec` _(required)_: Local path to the new (HEAD) OpenAPI spec file. An error will be thrown if the file can't be found.
+- `base-spec` _(required)_: Local path to the old (BASE) OpenAPI spec file. An error will be thrown if the file can't be found.
 - `github-token` _(required)_: Must be in form `${{ github.token }}` or `${{ secrets.GITHUB_TOKEN }}`; This token is used to add labels and comments to pull requests. It is built into Github Actions and does not need to be manually specified in your secrets store. [More Info](https://help.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#github-context)
-
-### Outputs:
-
-- `classification`: A string representing the type of change detected between the two OpenAPI specs. Possible values: 
-  - `major`: Indicates that the HEAD spec introduces at least one _incompatible_ or "breaking" changes
-  - `minor`: Indicates that the HEAD spec introduces only _compatible_ or "non-breaking" changes
-  - `patch`: Indicates that the HEAD spec does not introduce any changes at all
 
 ### Example:
 
-This following example assumes that your repository contains a valid OpenAPI spec file called `openapi.yaml` in the repository root. 
+This following example assumes that your repository contains a valid OpenAPI spec file called `openapi.yaml` in the repository root.
 
 ```yaml
 on: [pull_request]
@@ -33,25 +26,26 @@ on: [pull_request]
 name: openapi-diff
 
 jobs:
-
-  check:
+  openapi-compatiable:
+    strategy:
+      max-parallel: 1
+      fail-fast: false
     runs-on: ubuntu-latest
     steps:
-
-    - name: Check out HEAD revision
-      uses: actions/checkout@v2
-      with:
-        ref: ${{ github.head_ref }}
-        path: head
-    - name: Check out BASE revision
-      uses: actions/checkout@v2
-      with:
-        ref: ${{ github.base_ref }}
-        path: base
-    - name: Run OpenAPI Diff (from HEAD revision)
-      uses: evereepay/openapi-diff-action@v1.0.0-beta.1
-      with:
-        head-spec: head/openapi.yaml
-        base-spec: base/openapi.yaml
-        github-token: ${{ github.token }}
+      - name: Check out HEAD revision
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+          path: head
+      - name: Check out BASE revision
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.base_ref }}
+          path: base
+      - name: Run OpenAPI Diff (from HEAD revision)
+        uses: LimeFlight/openapi-diff-action@master
+        with:
+          head-spec: head/openapi.json
+          base-spec: base/openapi.json
+          github-token: ${{ github.token }}
 ```
