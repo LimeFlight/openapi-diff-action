@@ -18,7 +18,7 @@ This action needs two OpenAPI spec files to compare in order to run. Your workfl
 
 ### Example:
 
-This following example assumes that your repository contains a valid OpenAPI spec file called `openapi.yaml` in the repository root.
+This following example assumes that your repository contains a valid OpenAPI spec file called `openapi.json` in the repository root.
 
 ```yaml
 on: [pull_request]
