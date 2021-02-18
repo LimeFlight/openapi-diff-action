@@ -1,5 +1,7 @@
 # OpenAPI Diff Action
 
+Based on [LimeFlight/openapi-diff](https://github.com/LimeFlight/openapi-diff).
+
 This GitHub Action compares two OpenAPI (3.x) specs to determine if the newer (HEAD) spec introduces breaking or non-breaking changes.
 
 When running on `pull_request` events, a comment will be added (or updated if exists) to the PR with a backward compatibility report and human-readable diff, giving PR authors and reviewers greater insight into the implications if merged.
