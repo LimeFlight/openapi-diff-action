@@ -61,6 +61,7 @@ function Get-EnvironmentInput {
 $NewFile = Get-ActionInput head_spec -Required
 $OldFile = Get-ActionInput base_spec -Required
 $GitHubToken = Get-ActionInput github_token -Required
+$OutputPath = Get-ActionInput output_path -Required
 $GitHubEventPath = Get-EnvironmentInput github_event_path -Required
 $GitHubRepository = Get-EnvironmentInput github_repository -Required
 $AddCommentStr = Get-ActionInput add_comment
@@ -81,8 +82,9 @@ catch [FormatException] {
 
 Write-Output "Starting"
 
-Write-Output "HEAD-SPEC = $($NewFile)"
-Write-Output "BASE-SPEC = $($OldFile)"
+Write-Output "HEAD_SPEC = $($NewFile)"
+Write-Output "BASE_SPEC = $($OldFile)"
+Write-Output "OUTPUT_PATH = $($OutputPath)"
 Write-Output "GITHUB_TOKEN = $($GitHubToken)" 
 Write-Output "ADD_COMMENT = $($AddComment)"
 Write-Output "EXCLUDE_LABELS = $($exludeLabels)"
@@ -97,10 +99,10 @@ Write-Output "PULL REQUEST ID = $($PullRequest)"
 
 # Install openapi-diff-action from nuget
 dotnet new tool-manifest
-dotnet tool install LimeFlight.OpenAPI.Diff.Action --version 2.0.5-preview.17
+dotnet tool install LimeFlight.OpenAPI.Diff.Action --version 3.0.0
 
 # Run openapi-diff-action with args from github action
-dotnet tool run openapi-diff-action $GitHubToken $GitHubRepository $PullRequest $OldFile $NewFile $AddComment $exludeLabels
+dotnet tool run openapi-diff-action $GitHubToken $GitHubRepository $PullRequest $OldFile $NewFile $AddComment $exludeLabels $OutputPath
 if ($LastExitCode -eq 0) {
     Write-Host "Execution succeeded"
 }
