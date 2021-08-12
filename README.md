@@ -48,10 +48,10 @@ jobs:
       - name: Run OpenAPI Diff (from HEAD revision)
         uses: LimeFlight/openapi-diff-action@master
         with:
-          head-spec: head/openapi.json
-          base-spec: base/openapi.json
-          output-path: ./output
-          github-token: ${{ github.token }}
+          head_spec: head/openapi.json
+          base_spec: base/openapi.json
+          output_path: ./output
+          github_token: ${{ github.token }}
       - uses: actions/upload-artifact@v2
         with:
           name: diff-reports
