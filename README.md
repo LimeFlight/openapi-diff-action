@@ -16,6 +16,7 @@ This action needs two OpenAPI spec files to compare in order to run. Your workfl
 
 - `head-spec` _(required)_: Local path to the new (HEAD) OpenAPI spec file. An error will be thrown if the file can't be found.
 - `base-spec` _(required)_: Local path to the old (BASE) OpenAPI spec file. An error will be thrown if the file can't be found.
+- `output-path` _(required)_: Local path to store the output file.
 - `github-token` _(required)_: Must be in form `${{ github.token }}` or `${{ secrets.GITHUB_TOKEN }}`; This token is used to add labels and comments to pull requests. It is built into Github Actions and does not need to be manually specified in your secrets store. [More Info](https://help.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#github-context)
 
 ### Example:
@@ -49,5 +50,10 @@ jobs:
         with:
           head-spec: head/openapi.json
           base-spec: base/openapi.json
+          output-path: ./output
           github-token: ${{ github.token }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: diff-reports
+          path: ./output
 ```
