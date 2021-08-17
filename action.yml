@@ -15,6 +15,9 @@ inputs:
   head_spec:
     description: "The relative path or http url of the HEAD (new) spec"
     required: true
+  output_path:
+    description: "The local path to store the output file"
+    required: true
   add_comment:
     description: "Set to true if comment should be added, not overwritten"
     required: false
