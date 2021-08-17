@@ -99,7 +99,7 @@ Write-Output "PULL REQUEST ID = $($PullRequest)"
 
 # Install openapi-diff-action from nuget
 dotnet new tool-manifest
-dotnet tool install LimeFlight.OpenAPI.Diff.Action --version 3.0.4
+dotnet tool install LimeFlight.OpenAPI.Diff.Action --version 3.0.5
 
 # Run openapi-diff-action with args from github action
 dotnet tool run openapi-diff-action $GitHubToken $GitHubRepository $PullRequest $OldFile $NewFile $AddComment $exludeLabels $OutputPath
